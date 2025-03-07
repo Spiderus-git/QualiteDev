@@ -23,3 +23,7 @@ C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\obj\Debug\net8.0\refint
 C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\obj\Debug\net8.0\QualiteDev.pdb
 C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\obj\Debug\net8.0\QualiteDev.genruntimeconfig.cache
 C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\obj\Debug\net8.0\ref\QualiteDev.dll
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\bin\Debug\net8.0\Autofac.dll
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\bin\Debug\net8.0\MonoGame.Extended.dll
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\bin\Debug\net8.0\MonoGame.Extended.Content.Pipeline.dll
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\obj\Debug\net8.0\QualiteDev.sourcelink.json

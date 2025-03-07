@@ -33,10 +33,10 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        // Charger la carte Tiled
-        _map = Content.Load<TiledMap>("map");
+        _map = Content.Load<TiledMap>("assets/maps/SandBox");
         _mapRenderer = new TiledMapRenderer(GraphicsDevice, _map);
     }
+
 
 
     protected override void Update(GameTime gameTime)

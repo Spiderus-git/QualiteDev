@@ -335,6 +335,7 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "MonoGame.Content.Builder.Task >= 3.8.2.1105",
+      "MonoGame.Extended >= 4.0.4",
       "MonoGame.Extended.Content.Pipeline >= 4.0.4",
       "MonoGame.Framework.DesktopGL >= 3.8.2.1105"
     ]
@@ -385,6 +386,10 @@
           "MonoGame.Content.Builder.Task": {
             "target": "Package",
             "version": "[3.8.2.1105, )"
+          },
+          "MonoGame.Extended": {
+            "target": "Package",
+            "version": "[4.0.4, )"
           },
           "MonoGame.Extended.Content.Pipeline": {
             "target": "Package",

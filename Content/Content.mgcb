@@ -10,6 +10,12 @@
 
 #-------------------------------- References --------------------------------#
 
+/reference:..\..\..\..\..\.nuget\packages\monogame.extended.content.pipeline\4.0.4\lib\net8.0\MonoGame.Extended.Content.Pipeline.dll
 
 #---------------------------------- Content ---------------------------------#
+
+#begin assets/maps/SandBox/SandBox.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:assets/maps/SandBox/SandBox.tmx
 

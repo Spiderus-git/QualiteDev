@@ -19,12 +19,24 @@ class Game
         player = new Player();
         score = new Score();
 
+        // Charger les textures
         backgroundTexture = new Texture("assets/background.jpg");
         groundTexture = new Texture("assets/ground.png");
 
+        // Configurer le Background
         background = new Sprite(backgroundTexture);
+        background.Scale = new Vector2f(
+            800f / backgroundTexture.Size.X,
+            600f / backgroundTexture.Size.Y
+        );
+
+        // Configurer le Sol
         ground = new Sprite(groundTexture);
         ground.Position = new Vector2f(0, 500);
+        ground.Scale = new Vector2f(
+            800f / groundTexture.Size.X,
+            100f / groundTexture.Size.Y
+        );
 
         clock = new Clock();
     }
@@ -67,14 +79,24 @@ class Game
     private void Render()
     {
         window.Clear(Color.Cyan);
+
+        // Afficher le Background
         window.Draw(background);
+
+        // Afficher le Sol
         window.Draw(ground);
 
+        // Afficher les Obstacles
         foreach (Obstacle obs in obstacles)
             obs.Draw(window);
 
+        // Afficher le Joueur
         player.Draw(window);
+
+        // Afficher le Score
         score.Draw(window);
+
         window.Display();
     }
 }
+

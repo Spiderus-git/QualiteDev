@@ -1,7 +1,9 @@
 using SFML.Graphics;
 using SFML.Window;
 using SFML.System;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 class Game
 {
@@ -12,33 +14,41 @@ class Game
     private Texture backgroundTexture, groundTexture;
     private Sprite background, ground;
     private Score score;
+    private bool isPlaying = false;
+    private Font font;
+    private Text playText, scoreText, quitText;
+    private List<string> recentScores = new List<string>();
 
     public Game(RenderWindow win)
     {
         window = win;
+        window.SetFramerateLimit(60);
         player = new Player();
         score = new Score();
 
-        // Charger les textures
         backgroundTexture = new Texture("assets/background.jpg");
         groundTexture = new Texture("assets/ground.png");
 
-        // Configurer le Background
         background = new Sprite(backgroundTexture);
         background.Scale = new Vector2f(
-            800f / backgroundTexture.Size.X,
-            600f / backgroundTexture.Size.Y
+            window.Size.X / (float)backgroundTexture.Size.X,
+            window.Size.Y / (float)backgroundTexture.Size.Y
         );
 
-        // Configurer le Sol
         ground = new Sprite(groundTexture);
         ground.Position = new Vector2f(0, 500);
         ground.Scale = new Vector2f(
-            800f / groundTexture.Size.X,
+            window.Size.X / (float)groundTexture.Size.X,
             100f / groundTexture.Size.Y
         );
 
+        font = new Font("assets/font.ttf");
+        playText = new Text("Jouer", font, 30) { Position = new Vector2f(350, 200), FillColor = Color.White };
+        scoreText = new Text("Score", font, 30) { Position = new Vector2f(350, 300), FillColor = Color.White };
+        quitText = new Text("Quitter", font, 30) { Position = new Vector2f(350, 400), FillColor = Color.White };
+
         clock = new Clock();
+        LoadScores();
     }
 
     public void Run()
@@ -46,17 +56,74 @@ class Game
         while (window.IsOpen)
         {
             window.DispatchEvents();
-            HandleInput();
-            Update(clock.Restart().AsSeconds());
-            Render();
+            window.Clear(Color.Black);
+
+            if (!isPlaying)
+            {
+                ShowMenu();
+            }
+            else
+            {
+                float deltaTime = clock.Restart().AsSeconds();
+                HandleInput();
+                Update(deltaTime);
+                Render();
+            }
+
+            window.Display();
         }
+    }
+
+    private void ShowMenu()
+    {
+        window.Clear(Color.Black);
+        window.Draw(playText);
+        window.Draw(scoreText);
+        window.Draw(quitText);
+        window.Display();
+
+        while (!isPlaying && window.IsOpen)
+        {
+            window.DispatchEvents();
+            if (Mouse.IsButtonPressed(Mouse.Button.Left))
+            {
+                Vector2i mousePos = Mouse.GetPosition(window);
+                if (playText.GetGlobalBounds().Contains(mousePos.X, mousePos.Y))
+                {
+                    isPlaying = true;
+                    clock.Restart();
+                    return;
+                }
+                else if (scoreText.GetGlobalBounds().Contains(mousePos.X, mousePos.Y))
+                {
+                    ShowScores();
+                    return;
+                }
+                else if (quitText.GetGlobalBounds().Contains(mousePos.X, mousePos.Y))
+                {
+                    window.Close();
+                    return;
+                }
+            }
+        }
+    }
+
+    private void ShowScores()
+    {
+        window.Clear(Color.Black);
+        int y = 100;
+        foreach (var scoreEntry in recentScores)
+        {
+            Text text = new Text(scoreEntry, font, 20) { Position = new Vector2f(100, y), FillColor = Color.White };
+            window.Draw(text);
+            y += 30;
+        }
+        window.Display();
+        System.Threading.Thread.Sleep(2000);
     }
 
     private void HandleInput()
     {
-        if (Keyboard.IsKeyPressed(Keyboard.Key.Escape))
-            window.Close();
-
         player.HandleInput();
     }
 
@@ -65,38 +132,49 @@ class Game
         player.Update(deltaTime);
         score.Update();
 
-        // Gérer les obstacles
         foreach (Obstacle obs in obstacles)
             obs.Update(deltaTime);
 
-        // Ajouter de nouveaux obstacles
         if (obstacles.Count == 0 || obstacles[^1].Position.X < 500)
-        {
             obstacles.Add(new Obstacle(800));
-        }
     }
 
     private void Render()
     {
         window.Clear(Color.Cyan);
-
-        // Afficher le Background
         window.Draw(background);
-
-        // Afficher le Sol
         window.Draw(ground);
 
-        // Afficher les Obstacles
         foreach (Obstacle obs in obstacles)
             obs.Draw(window);
 
-        // Afficher le Joueur
         player.Draw(window);
-
-        // Afficher le Score
         score.Draw(window);
+    }
 
-        window.Display();
+    private void LoadScores()
+    {
+        if (File.Exists("scores.txt"))
+            recentScores.AddRange(File.ReadAllLines("scores.txt"));
+    }
+
+    private void SaveScore(int points)
+    {
+        string entry = $"{DateTime.Now}: {points} points";
+        File.AppendAllLines("scores.txt", new[] { entry });
     }
 }
+
+class Program
+{
+    static void Main()
+    {
+        VideoMode desktopMode = VideoMode.DesktopMode;
+        RenderWindow window = new RenderWindow(new VideoMode(800, 600), "Runner 2D", Styles.Default);
+        Game game = new Game(window);
+        game.Run();
+    }
+}
+
+
 

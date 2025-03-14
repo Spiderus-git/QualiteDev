@@ -4,94 +4,128 @@ using SFML.Window;
 
 class Player
 {
-    private Texture texture;       // Texture du sprite sheet
-    private Sprite sprite;        // Sprite du joueur
-    private IntRect frameRect;     // Rectangle pour sélectionner la frame dans la texture
-    private int frameWidth = 32;  // Largeur d'une frame
-    private int frameHeight = 32; // Hauteur d'une frame
-    private int currentFrame = 0; // Frame actuelle de l'animation
-    private float animationTimer = 0f; // Timer pour l'animation
+    // Texture et sprite du joueur
+    private Texture texture;
+    private Sprite sprite;
 
-    private Vector2f velocity;    // Vélocité du joueur
+    // Gestion des animations (spritesheet)
+    private IntRect frameRect;
+    private int frameWidth = 32;  // Largeur d'une frame d'animation
+    private int frameHeight = 32; // Hauteur d'une frame d'animation
+    private int currentFrame = 0; // Indice de la frame actuelle
+    private float animationTimer = 0f; // Timer pour gérer la vitesse de l'animation
+
+    // Propriétés physiques du joueur
+    private Vector2f velocity; // Vitesse et direction du mouvement
     private bool isJumping = false; // Indique si le joueur est en train de sauter
-    private float gravity = 1000f; // Force de gravité
-    private float jumpStrength = -400f; // Force du saut
-    private float speed = 200f;   // Vitesse de déplacement horizontal
+    private float gravity = 1000f; // Force de gravité appliquée au joueur
+    private float jumpStrength = -400f; // Force du saut (valeur négative pour monter)
+    private float speed = 200f; // Vitesse horizontale du joueur
 
+    // Contraintes du jeu
+    private const float GroundY = 450; // Position du sol (limite en Y)
+    private const float WindowWidth = 800; // Largeur de la fenêtre (limite en X)
+
+    // Propriété pour obtenir la position actuelle du joueur
+    public Vector2f Position => sprite.Position;
+
+    // Constructeur du joueur
     public Player()
     {
+        // Chargement de la texture du joueur
         texture = new Texture("assets/player.png");
         sprite = new Sprite(texture);
 
-        // Sélection de la première frame de "RUN" (ligne 1)
-        frameRect = new IntRect(0, frameHeight * 1, frameWidth, frameHeight); // Ligne 1 = RUN
+        // Sélectionne la première frame de l'animation "RUN"
+        frameRect = new IntRect(0, frameHeight * 1, frameWidth, frameHeight);
         sprite.TextureRect = frameRect;
 
-        // Position initiale du joueur
-        sprite.Position = new Vector2f(100, 450);
+        // Définit la position initiale du joueur sur le sol
+        sprite.Position = new Vector2f(100, GroundY);
 
-        // Agrandir le sprite (par exemple, 2x la taille originale)
-        sprite.Scale = new Vector2f(2, 2); // Facteur d'échelle (2x en largeur, 2x en hauteur)
+        // Agrandit le sprite (x2)
+        sprite.Scale = new Vector2f(2, 2);
     }
 
+    // Réinitialise la position du joueur après une perte de vie
+    public void ResetPosition()
+    {
+        sprite.Position = new Vector2f(100, GroundY);
+    }
+
+    // Gestion des entrées clavier pour déplacer le joueur
     public void HandleInput()
     {
-        // Déplacement horizontal
+        // Déplacement vers la gauche
         if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
-            sprite.Position -= new Vector2f(speed * 0.016f, 0); // Déplacement vers la gauche
+            sprite.Position -= new Vector2f(speed * 0.016f, 0);
 
+        // Déplacement vers la droite
         if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
-            sprite.Position += new Vector2f(speed * 0.016f, 0); // Déplacement vers la droite
+            sprite.Position += new Vector2f(speed * 0.016f, 0);
 
-        // Saut
+        // Saut (si le joueur est au sol)
         if (Keyboard.IsKeyPressed(Keyboard.Key.Space) && !isJumping)
         {
-            velocity.Y = jumpStrength; // Appliquer la force du saut
-            isJumping = true; // Le joueur est en train de sauter
+            velocity.Y = jumpStrength; // Applique la force du saut
+            isJumping = true; // Le joueur est en l'air
         }
     }
 
+    // Mise à jour du joueur (position, animation, physique)
     public void Update(float deltaTime)
     {
-        // Mettre à jour le timer d'animation
-        animationTimer += deltaTime;
+        animationTimer += deltaTime; // Incrémente le timer d'animation
 
-        // Animation de course (RUN)
-        if (Keyboard.IsKeyPressed(Keyboard.Key.Right) || Keyboard.IsKeyPressed(Keyboard.Key.Left))
+        bool isMoving = false; // Vérifie si le joueur est en mouvement
+
+        // Animation de course (si le joueur appuie sur Gauche ou Droite)
+        if (Keyboard.IsKeyPressed(Keyboard.Key.Left) || Keyboard.IsKeyPressed(Keyboard.Key.Right))
         {
-            if (animationTimer >= 0.1f) // Changer de frame toutes les 0.1 secondes
+            isMoving = true;
+            if (animationTimer >= 0.1f) // Change de frame toutes les 0.1 secondes
             {
-                currentFrame = (currentFrame + 1) % 6; // 6 frames pour l'animation RUN
-                frameRect.Left = currentFrame * frameWidth; // Sélectionner la frame suivante
-                frameRect.Top = frameHeight * 2; // Ligne 1 = RUN
-                sprite.TextureRect = frameRect; // Appliquer la nouvelle frame
-                animationTimer = 0f; // Réinitialiser le timer
+                currentFrame = (currentFrame + 1) % 6; // Il y a 6 frames dans l'animation
+                frameRect.Left = currentFrame * frameWidth; // Change la frame affichée
+                frameRect.Top = frameHeight * 2; // Ligne de l'animation de course
+                sprite.TextureRect = frameRect;
+                animationTimer = 0f; // Réinitialise le timer
             }
         }
-        else
+
+        // Si le joueur ne bouge pas, revenir à la première frame de "RUN"
+        if (!isMoving)
         {
-            // Si le joueur ne bouge pas, revenir à la première frame de RUN
             currentFrame = 0;
             frameRect.Left = 0;
-            frameRect.Top = frameHeight * 2; // Ligne 1 = RUN
+            frameRect.Top = frameHeight * 2; // Position de l'animation au repos
             sprite.TextureRect = frameRect;
         }
 
-        // Appliquer la gravité
+        // Applique la gravité au joueur
         velocity.Y += gravity * deltaTime;
+
+        // Met à jour la position du joueur en fonction de sa vitesse
         sprite.Position += velocity * deltaTime;
 
-        // Collision avec le sol
-        if (sprite.Position.Y >= 450) // 450 = position du sol
+        // Vérifie si le joueur touche le sol
+        if (sprite.Position.Y >= GroundY)
         {
-            sprite.Position = new Vector2f(sprite.Position.X, 450); // Bloquer le joueur au sol
-            isJumping = false; // Le joueur n'est plus en train de sauter
-            velocity.Y = 0; // Réinitialiser la vélocité verticale
+            sprite.Position = new Vector2f(sprite.Position.X, GroundY); // Le bloque au sol
+            isJumping = false; // Il n'est plus en l'air
+            velocity.Y = 0; // Réinitialise la vitesse verticale
         }
+
+        // Empêche le joueur de sortir de l'écran en X (gauche/droite)
+        sprite.Position = new Vector2f(
+            Math.Clamp(sprite.Position.X, 0, WindowWidth - frameWidth * sprite.Scale.X),
+            sprite.Position.Y
+        );
     }
 
+    // Affichage du joueur à l'écran
     public void Draw(RenderWindow window)
     {
-        window.Draw(sprite); // Dessiner le joueur
+        window.Draw(sprite);
     }
 }

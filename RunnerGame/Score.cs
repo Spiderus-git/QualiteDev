@@ -25,5 +25,17 @@ class Score
     {
         window.Draw(text);
     }
+
+    public int GetPoints()
+    {
+        return points;
+    }
+
+    public void Reset()
+    {
+        points = 0;
+        text.DisplayedString = "Score: 0";
+    }
+
 }
 

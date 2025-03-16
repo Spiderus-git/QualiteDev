@@ -2,7 +2,7 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 
-class Player
+public class Player
 {
     // Texture et sprite du joueur
     private Texture texture;
@@ -27,13 +27,13 @@ class Player
     private const float WindowWidth = 800; // Largeur de la fenêtre (limite en X)
 
     // Propriété pour obtenir la position actuelle du joueur
-    public Vector2f Position => sprite.Position;
+    public Vector2f Position { get; private set; }
 
     // Constructeur du joueur
     public Player()
     {
         // Chargement de la texture du joueur
-        texture = new Texture("assets/player.png");
+        texture = new Texture(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets/player.png"));
         sprite = new Sprite(texture);
 
         // Sélectionne la première frame de l'animation "RUN"
@@ -41,7 +41,7 @@ class Player
         sprite.TextureRect = frameRect;
 
         // Définit la position initiale du joueur sur le sol
-        sprite.Position = new Vector2f(100, GroundY);
+        SetPosition(new Vector2f(100, GroundY));
 
         // Agrandit le sprite (x2)
         sprite.Scale = new Vector2f(2, 2);
@@ -50,7 +50,7 @@ class Player
     // Réinitialise la position du joueur après une perte de vie
     public void ResetPosition()
     {
-        sprite.Position = new Vector2f(100, GroundY);
+        SetPosition(new Vector2f(100, GroundY));
     }
 
     // Gestion des entrées clavier pour déplacer le joueur
@@ -58,11 +58,11 @@ class Player
     {
         // Déplacement vers la gauche
         if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
-            sprite.Position -= new Vector2f(speed * 0.016f, 0);
+            SetPosition(new Vector2f(Position.X - speed * 0.016f, Position.Y));
 
         // Déplacement vers la droite
         if (Keyboard.IsKeyPressed(Keyboard.Key.Right))
-            sprite.Position += new Vector2f(speed * 0.016f, 0);
+            SetPosition(new Vector2f(Position.X + speed * 0.016f, Position.Y));
 
         // Saut (si le joueur est au sol)
         if (Keyboard.IsKeyPressed(Keyboard.Key.Space) && !isJumping)
@@ -106,26 +106,37 @@ class Player
         velocity.Y += gravity * deltaTime;
 
         // Met à jour la position du joueur en fonction de sa vitesse
-        sprite.Position += velocity * deltaTime;
+        SetPosition(Position + velocity * deltaTime);
 
         // Vérifie si le joueur touche le sol
-        if (sprite.Position.Y >= GroundY)
+        if (Position.Y >= GroundY)
         {
-            sprite.Position = new Vector2f(sprite.Position.X, GroundY); // Le bloque au sol
-            isJumping = false; // Il n'est plus en l'air
-            velocity.Y = 0; // Réinitialise la vitesse verticale
+            SetPosition(new Vector2f(Position.X, GroundY));
+            isJumping = false;
+            velocity.Y = 0;
         }
+    }
 
-        // Empêche le joueur de sortir de l'écran en X (gauche/droite)
-        sprite.Position = new Vector2f(
-            Math.Clamp(sprite.Position.X, 0, WindowWidth - frameWidth * sprite.Scale.X),
-            sprite.Position.Y
+    // Empêche le joueur de sortir de l'écran
+    public void SetPosition(Vector2f newPosition)
+    {
+        Position = new Vector2f(
+            Math.Clamp(newPosition.X, 0, WindowWidth - frameWidth * sprite.Scale.X), // Empêche la sortie de l'écran en X
+            newPosition.Y
         );
+        sprite.Position = Position; // Synchronise le sprite avec la nouvelle position
     }
 
     // Affichage du joueur à l'écran
     public void Draw(RenderWindow window)
     {
         window.Draw(sprite);
+    }
+
+    public bool CheckCollision(Obstacle obstacle)
+    {
+        return Position.X + 40 > obstacle.Position.X &&
+               Position.X < obstacle.Position.X + 50 &&
+               Position.Y >= 450;
     }
 }

@@ -1,7 +1,7 @@
 using SFML.Graphics;
 using SFML.System;
 
-class Obstacle
+public class Obstacle
 {
     private Texture texture;
     private Sprite sprite;

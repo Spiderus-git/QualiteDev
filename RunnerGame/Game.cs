@@ -33,7 +33,7 @@ class Game
         player = new Player();
         score = new Score();
 
-        backgroundTexture = new Texture("assets/background.jpg");
+        backgroundTexture = new Texture(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets/background.jpg"));
         groundTexture = new Texture("assets/ground.png");
 
         background = new Sprite(backgroundTexture);

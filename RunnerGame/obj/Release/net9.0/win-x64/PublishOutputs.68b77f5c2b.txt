@@ -1,0 +1,14 @@
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\RunnerGame\RunnerGame.pdb
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\RunnerGame\testhost.exe
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\RunnerGame\assets\background.jpg
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\RunnerGame\assets\font.ttf
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\RunnerGame\assets\ground.png
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\RunnerGame\assets\obstacle.jpg
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\RunnerGame\assets\player.png
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\RunnerGame\NUnit3.TestAdapter.pdb
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\RunnerGame\csfml-audio.dll
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\RunnerGame\csfml-graphics.dll
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\RunnerGame\csfml-system.dll
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\RunnerGame\csfml-window.dll
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\RunnerGame\openal32.dll
+C:\Users\maxen\Desktop\Qualité de dev\JeuRPG\QualiteDev\RunnerGame\RunnerGame.exe
